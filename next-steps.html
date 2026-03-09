@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Next Steps — Comstock Research Projects 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d1b2a;--navy2:#162336;--navy3:#1e2f45;
+  --cream:#f5f0e8;--muted:#8a9bb0;--line:rgba(184,148,63,.22);
+  --gold:#b8943f;--gold2:#d4a84b;
+  --green:#2a7a4b;--green2:#3aa866;--green-bg:rgba(42,122,75,.12);
+  --red:#8b2020;--red2:#c04040;--red-bg:rgba(139,32,32,.12);
+  --blue2:#3a7abf;--blue-bg:rgba(26,74,122,.15);
+  --amber2:#c47a20;--amber-bg:rgba(122,74,16,.15);
+  --purple2:#8a50c0;--purple-bg:rgba(74,32,112,.15);
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.top-rule{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);position:relative;z-index:1}
+
+/* layout */
+.wrap{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:0 32px}
+
+/* nav */
+.nav-bar{padding:20px 0 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.nav-link{font-size:.75rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:4px;transition:color .2s}
+.nav-link:hover{color:var(--gold)}
+
+/* header */
+header{padding:44px 0 32px;border-bottom:1px solid var(--line)}
+.tag{font-weight:500;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.tag::after{content:'';flex:1;height:1px;background:var(--line)}
+h1{font-family:'EB Garamond',serif;font-size:clamp(1.6rem,3.5vw,2.2rem);font-weight:600;line-height:1.2}
+.subtitle{font-family:'EB Garamond',serif;font-style:italic;font-size:.98rem;color:var(--muted);margin-top:8px}
+.meta{margin-top:18px;font-size:.75rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.pill{background:rgba(184,148,63,.1);border:1px solid var(--line);border-radius:20px;padding:2px 11px;color:var(--gold);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+
+/* project sections */
+.projects{padding:36px 0 60px;display:flex;flex-direction:column;gap:40px}
+
+.project{border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--navy2)}
+.project-header{padding:18px 22px 16px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px}
+.project-icon{width:36px;height:36px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.project-icon.mgen{background:rgba(58,168,102,.15);border:1px solid rgba(58,168,102,.25)}
+.project-icon.tick{background:rgba(196,122,32,.15);border:1px solid rgba(196,122,32,.25)}
+.project-icon.deploy{background:var(--blue-bg);border:1px solid rgba(58,122,191,.25)}
+.project-meta{flex:1}
+.project-title{font-family:'EB Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--cream);line-height:1.3}
+.project-title em{font-style:italic;color:var(--gold2)}
+.project-desc{font-size:.78rem;color:var(--muted);margin-top:4px;line-height:1.5}
+.project-badge{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:2px 8px;border-radius:3px;margin-top:6px;display:inline-block}
+.badge-urgent{background:var(--red-bg);color:var(--red2);border:1px solid rgba(192,64,64,.25)}
+.badge-active{background:var(--green-bg);color:var(--green2);border:1px solid rgba(58,168,102,.25)}
+.badge-pending{background:var(--amber-bg);color:var(--amber2);border:1px solid rgba(196,122,32,.25)}
+.badge-ready{background:var(--blue-bg);color:var(--blue2);border:1px solid rgba(58,122,191,.25)}
+
+/* checklist */
+.checklist{padding:6px 0}
+.check-group{padding:12px 22px 4px}
+.check-group-label{font-size:9.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.check-group-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+.check-item{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.03);cursor:pointer;user-select:none;transition:background .15s;border-radius:4px;padding-left:4px;padding-right:4px}
+.check-item:last-child{border-bottom:none}
+.check-item:hover{background:rgba(255,255,255,.02)}
+
+.cb{width:17px;height:17px;border-radius:4px;border:1.5px solid;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:all .15s;position:relative}
+.cb.urgent{border-color:rgba(192,64,64,.5)}
+.cb.active{border-color:rgba(58,168,102,.5)}
+.cb.pending{border-color:rgba(196,122,32,.5)}
+.cb.ready{border-color:rgba(58,122,191,.5)}
+.cb.neutral{border-color:rgba(184,148,63,.35)}
+
+.cb.checked{border-color:transparent !important}
+.cb.checked.urgent{background:var(--red2)}
+.cb.checked.active{background:var(--green2)}
+.cb.checked.pending{background:var(--amber2)}
+.cb.checked.ready{background:var(--blue2)}
+.cb.checked.neutral{background:var(--gold)}
+.checkmark{opacity:0;color:white;font-size:.7rem;font-weight:700;transition:opacity .15s}
+.cb.checked .checkmark{opacity:1}
+
+.check-content{flex:1}
+.check-label{font-size:.82rem;color:#b8cce0;line-height:1.5;transition:color .15s}
+.check-item.done .check-label{color:#3d5168;text-decoration:line-through;text-decoration-color:rgba(61,81,104,.5)}
+.check-label em{font-style:italic;color:var(--gold2)}
+.check-label strong{font-weight:500;color:var(--cream)}
+.check-item.done .check-label strong{color:#3d5168}
+.check-note{font-size:.71rem;color:#4a6480;margin-top:3px;line-height:1.45}
+.check-note em{font-style:italic}
+.check-note a{color:var(--gold);text-decoration:none}
+.check-note a:hover{text-decoration:underline}
+
+/* deadline chip */
+.deadline{display:inline-flex;align-items:center;gap:4px;font-family:'DM Mono',monospace;font-size:.65rem;padding:1px 7px;border-radius:3px;margin-left:8px;vertical-align:middle;font-weight:500}
+.deadline.hot{background:var(--red-bg);color:#e08080;border:1px solid rgba(192,64,64,.2)}
+.deadline.warm{background:var(--amber-bg);color:#c9a060;border:1px solid rgba(196,122,32,.2)}
+.deadline.cool{background:var(--blue-bg);color:#80a8d8;border:1px solid rgba(58,122,191,.2)}
+
+/* progress bar */
+.progress-row{padding:14px 22px;border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.progress-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;border-radius:2px;transition:width .4s ease;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.progress-label{font-family:'DM Mono',monospace;font-size:.68rem;color:var(--muted);white-space:nowrap}
+
+/* footer */
+footer{border-top:1px solid var(--line);padding:20px 0 44px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+footer p{font-size:.72rem;color:#3d5168;line-height:1.6}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+@media(max-width:600px){
+  .wrap{padding:0 16px}
+  .project-header{flex-direction:column;gap:8px}
+}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+header{animation:fadeUp .45s ease both}
+.project:nth-child(1){animation:fadeUp .4s .08s ease both}
+.project:nth-child(2){animation:fadeUp .4s .14s ease both}
+.project:nth-child(3){animation:fadeUp .4s .20s ease both}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+<div class="wrap">
+
+  <div class="nav-bar">
+    <a href="index.html" class="nav-link">← <em>M. genitalium</em> Case Documents</a>
+    <a href="https://comstocd.github.io" class="nav-link">Clinical Reference Suite ↗</a>
+  </div>
+
+  <header>
+    <div class="tag">Project Tracker &nbsp;·&nbsp; Comstock D, MD &nbsp;·&nbsp; PGY-3 Internal Medicine</div>
+    <h1>Next Steps</h1>
+    <div class="subtitle">Active research projects — updated March 2026</div>
+    <div class="meta">
+      <span class="pill">M. genitalium</span>
+      <span class="pill">Tick-Borne Co-Infection</span>
+      <span class="pill">GitHub Deployment</span>
+      <span style="color:#3d5168">Guthrie Lourdes Hospital · Binghamton, NY</span>
+    </div>
+  </header>
+
+  <div class="projects">
+
+    <!-- ── PROJECT 1: M. GENITALIUM ───────────────────────────────── -->
+    <div class="project" id="proj-mgen">
+      <div class="project-header">
+        <div class="project-icon mgen">🧬</div>
+        <div class="project-meta">
+          <div class="project-title">Recurrent <em>M. genitalium</em> Urethritis — Case Report</div>
+          <div class="project-desc">Fluoroquinolone–mineral chelation as pharmacokinetic treatment failure. Full manuscript + OFID Novel ID Cases submission version + CID Brief Report version.</div>
+          <span class="project-badge badge-active">Active — pre-submission</span>
+        </div>
+      </div>
+
+      <div class="checklist">
+
+        <div class="check-group">
+          <div class="check-group-label">Immediate</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb pending"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Obtain resistance genotyping result <span class="deadline hot">Pending since Jan 15</span></div>
+              <div class="check-note">23S rRNA mutation (A2058G / A2059G) ordered Jan 15, 2026. Result changes framing in Introduction §2 and Limitations. Either result is publishable.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb pending"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Update manuscript with genotyping result when available</div>
+              <div class="check-note">Sections to revise: Introduction paragraph 2 (resistance architecture), Limitations. Also update Research Day Abstract v2 if result returns before Mar 17.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb urgent"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Submit Research Day Abstract v2 <span class="deadline hot">Due Mar 17, 2026</span></div>
+              <div class="check-note">Abstract is submission-ready as-is. Submit now; amend if genotyping returns before deadline.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="check-group">
+          <div class="check-group-label">Pre-submission</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb active"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Conduct patient telephone interview</div>
+              <div class="check-note">Interview guide v5 is ready. Obtain patient-reported supplement chronology and timeline details. Non-leading Section C language preserved — do not brief patient on chelation mechanism before the call.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb active"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Send manuscripts to Dr. Gareca for co-author review</div>
+              <div class="check-note">Send both OFID Novel ID Cases version and CID Brief Report version. Include brief note on two-track submission strategy and request his venue preference — his FIDSA status may enable IDSA fast-track review.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb active"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Confirm patient written consent for publication</div>
+              <div class="check-note">Required by OFID and all IDSA journals. Age suppressed (decade range used). Identifying details modified. Document consent in the manuscript Patient Consent Statement section.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="check-group">
+          <div class="check-group-label">Submission</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb neutral"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Select submission venue and submit</div>
+              <div class="check-note"><strong>OFID Novel ID Cases</strong> — best fit for full case with literature review. Open-access IDSA journal. Submit via editorialmanager.com/ofid. <strong>CID Brief Report</strong> — higher impact factor, compressed argument. Choose one track; note AI use disclosure required by both journals per WAME guidelines.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb neutral"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Complete ICMJE authorship disclosure forms at acceptance</div>
+              <div class="check-note">OFID requires ICMJE forms at acceptance, not submission. Have both authors complete <a href="http://www.icmje.org/coi_disclosure.pdf" target="_blank">icmje.org/coi_disclosure.pdf</a> at that stage.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="fill-mgen" style="width:0%"></div></div>
+        <div class="progress-label" id="label-mgen">0 / 7</div>
+      </div>
+    </div>
+
+
+    <!-- ── PROJECT 2: TICK-BORNE ───────────────────────────────────── -->
+    <div class="project" id="proj-tick">
+      <div class="project-header">
+        <div class="project-icon tick">🦠</div>
+        <div class="project-meta">
+          <div class="project-title">Tick-Borne Co-Infection Case Series</div>
+          <div class="project-desc">Polymicrobial tick-borne co-infection in the Southern Tier of New York. Institutional access conflict escalated to DIO.</div>
+          <span class="project-badge badge-urgent">Institutional conflict — DIO escalation active</span>
+        </div>
+      </div>
+
+      <div class="checklist">
+
+        <div class="check-group">
+          <div class="check-group-label">Immediate <span class="deadline hot">Mar 17 deadline</span></div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb urgent"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Await DIO response and Dr. Gareca call before deciding next steps</div>
+              <div class="check-note">DIO escalated after documented non-response from Chief Resident and Program Director. Next action depends on outcome of that conversation.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb urgent"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Finalize and submit Research Day abstract <span class="deadline hot">Due Mar 17, 2026</span></div>
+              <div class="check-note">Abstract v2 drafted as polymicrobial tick-borne co-infection case series framing. Submit as-is if case access remains unresolved — abstract framing does not require IRB-level chart access in all institutions.</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="check-group">
+          <div class="check-group-label">Pending resolution of access conflict</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb pending"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Gain formal access to co-infection cases</div>
+              <div class="check-note">Document all communications. If DIO resolves favorably, proceed to case identification and IRB/QI determination. If access remains blocked, assess alternative pathways (de-identified case series, literature-based review).</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb pending"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Determine IRB pathway — full review vs. QI exemption</div>
+              <div class="check-note">Case series of ≤3 de-identified patients often qualifies for QI exemption at many institutions. Confirm with Guthrie IRB/research office.</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb pending"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Identify target journal for case series submission</div>
+              <div class="check-note">Target: <em>Clinical Infectious Diseases</em> (high impact, IDSA), <em>OFID</em> (open access), or <em>Vector-Borne and Zoonotic Diseases</em> (specialty fit). Framing: polymicrobial co-infection epidemiology in endemic region.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="fill-tick" style="width:0%"></div></div>
+        <div class="progress-label" id="label-tick">0 / 5</div>
+      </div>
+    </div>
+
+
+    <!-- ── PROJECT 3: GITHUB DEPLOYMENT ───────────────────────────── -->
+    <div class="project" id="proj-deploy">
+      <div class="project-header">
+        <div class="project-icon deploy">🌐</div>
+        <div class="project-meta">
+          <div class="project-title">GitHub Pages Deployment</div>
+          <div class="project-desc">Push all project files to comstocd.github.io/Mycoplasma-genitalium/</div>
+          <span class="project-badge badge-ready">Ready to deploy</span>
+        </div>
+      </div>
+
+      <div class="checklist">
+
+        <div class="check-group">
+          <div class="check-group-label">Files to push (flat to repo root)</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label"><strong>index.html</strong> — project landing page (10 document cards)</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label"><strong>algorithm.html</strong> — NGU / <em>M. genitalium</em> clinical management algorithm</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label"><strong>next-steps.html</strong> — this checklist</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">All .docx and .pdf manuscript files (6 pairs)</div>
+              <div class="check-note">Case Report + Mini-Review · OFID Novel ID Cases · CID Brief Report · Research Day Abstract v2 · Patient Interview Guide v5 · Moxifloxacin Counseling Handout · Annotated Reference Guide v2</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">RIS reference files (2 files)</div>
+              <div class="check-note">Mgen_EndNote_Library.ris (55 refs) · Mgen_Group11_CaseReports.ris (8 refs)</div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="check-group">
+          <div class="check-group-label">Configuration</div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Enable GitHub Pages from main branch root in repo Settings</div>
+              <div class="check-note">Repo: <strong>comstocd/Mycoplasma-genitalium</strong> · Settings → Pages → Source: Deploy from branch → main → / (root)</div>
+            </div>
+          </div>
+
+          <div class="check-item" onclick="toggle(this)">
+            <div class="cb ready"><span class="checkmark">✓</span></div>
+            <div class="check-content">
+              <div class="check-label">Verify live URL: <a href="https://comstocd.github.io/Mycoplasma-genitalium/" target="_blank">comstocd.github.io/Mycoplasma-genitalium/</a></div>
+              <div class="check-note">Allow 1–2 minutes after push for Pages to build. Check all PDF links open and DOCX/RIS files download correctly.</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="progress-row">
+        <div class="progress-track"><div class="progress-fill" id="fill-deploy" style="width:0%"></div></div>
+        <div class="progress-label" id="label-deploy">0 / 7</div>
+      </div>
+    </div>
+
+  </div><!-- .projects -->
+
+  <footer>
+    <p>Comstock D, MD &nbsp;·&nbsp; PGY-3 Internal Medicine, Guthrie Lourdes Hospital &nbsp;·&nbsp; 2026<br>
+    <a href="mailto:david.comstock@guthrie.org">david.comstock@guthrie.org</a></p>
+    <a href="https://comstocd.github.io/Mycoplasma-genitalium/" style="font-size:.72rem;color:var(--muted);text-decoration:none">🌐 comstocd.github.io/Mycoplasma-genitalium/</a>
+  </footer>
+
+</div><!-- .wrap -->
+
+<script>
+// ── checkbox toggle with localStorage persistence ──────────────────
+function toggle(item) {
+  item.classList.toggle('done');
+  const cb = item.querySelector('.cb');
+  cb.classList.toggle('checked');
+  saveState();
+  updateProgress();
+}
+
+function saveState() {
+  const items = document.querySelectorAll('.check-item');
+  const state = Array.from(items).map(i => i.classList.contains('done'));
+  try { localStorage.setItem('nextStepsState', JSON.stringify(state)); } catch(e) {}
+}
+
+function loadState() {
+  try {
+    const state = JSON.parse(localStorage.getItem('nextStepsState') || '[]');
+    const items = document.querySelectorAll('.check-item');
+    items.forEach((item, i) => {
+      if (state[i]) {
+        item.classList.add('done');
+        item.querySelector('.cb').classList.add('checked');
+      }
+    });
+  } catch(e) {}
+}
+
+function updateProgress() {
+  const projects = [
+    { id: 'proj-mgen',   fillId: 'fill-mgen',   labelId: 'label-mgen'   },
+    { id: 'proj-tick',   fillId: 'fill-tick',   labelId: 'label-tick'   },
+    { id: 'proj-deploy', fillId: 'fill-deploy', labelId: 'label-deploy' },
+  ];
+  projects.forEach(p => {
+    const proj  = document.getElementById(p.id);
+    const items = proj.querySelectorAll('.check-item');
+    const done  = proj.querySelectorAll('.check-item.done').length;
+    const pct   = items.length ? Math.round(done / items.length * 100) : 0;
+    document.getElementById(p.fillId).style.width  = pct + '%';
+    document.getElementById(p.labelId).textContent = done + ' / ' + items.length;
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => { loadState(); updateProgress(); });
+</script>
+</body>
+</html>
