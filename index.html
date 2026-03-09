@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>M. genitalium Case Report — Comstock & Gareca</title>
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b2a;
+      --navy2:  #162336;
+      --cream:  #f5f0e8;
+      --gold:   #b8943f;
+      --gold2:  #d4a84b;
+      --rust:   #8b2c2c;
+      --muted:  #8a9bb0;
+      --line:   rgba(184,148,63,.25);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--navy);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── decorative grain overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── top rule ── */
+    .top-rule {
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--gold), var(--gold2), var(--gold), transparent);
+      position: relative; z-index: 1;
+    }
+
+    /* ── header ── */
+    header {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 64px 32px 40px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .journal-tag {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 500;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .journal-tag::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--line);
+    }
+
+    h1 {
+      font-family: 'EB Garamond', serif;
+      font-size: clamp(1.7rem, 4vw, 2.6rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: var(--cream);
+      margin-bottom: 6px;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--gold2);
+    }
+
+    .subtitle {
+      font-family: 'EB Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    .authors {
+      margin-top: 22px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      letter-spacing: 0.03em;
+    }
+    .authors strong { color: var(--cream); font-weight: 500; }
+
+    .affil {
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: #5e7390;
+      line-height: 1.6;
+    }
+
+    /* ── abstract strip ── */
+    .abstract-strip {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(135deg, rgba(184,148,63,.06), transparent);
+    }
+
+    .abstract-strip p {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      line-height: 1.75;
+      color: #b8c8d8;
+    }
+
+    .abstract-strip p em { font-style: italic; color: var(--gold2); }
+
+    /* ── section label ── */
+    .section-label {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 36px 32px 12px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── document grid ── */
+    .doc-grid {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 32px 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .doc-card {
+      background: var(--navy2);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      padding: 20px 22px 18px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: var(--gold);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+
+    .doc-card:hover {
+      border-color: rgba(184,148,63,.5);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .doc-card:hover::before { opacity: 1; }
+
+    .doc-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9.5px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 3px;
+      width: fit-content;
+    }
+    .badge-docx  { background: rgba(59,130,246,.15); color: #7ab4f5; }
+    .badge-ris   { background: rgba(139,44,44,.25);  color: #e08080; }
+    .badge-pdf   { background: rgba(184,148,63,.15); color: var(--gold2); }
+
+    .doc-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--cream);
+      line-height: 1.35;
+    }
+    .doc-title em { font-style: italic; }
+
+    .doc-desc {
+      font-size: 0.76rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .doc-arrow {
+      margin-top: auto;
+      font-size: 0.72rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+    }
+
+    /* ── keywords ── */
+    .keywords {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 28px 32px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .kw-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-right: 4px;
+    }
+
+    .kw {
+      font-size: 0.75rem;
+      color: var(--muted);
+      padding: 3px 10px;
+      border: 1px solid rgba(138,155,176,.2);
+      border-radius: 20px;
+    }
+
+    /* ── footer ── */
+    footer {
+      position: relative; z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 20px 32px 48px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    footer p {
+      font-size: 0.74rem;
+      color: #3d5168;
+      line-height: 1.6;
+    }
+
+    footer a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    .back-link {
+      font-size: 0.74rem;
+      color: var(--muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--gold); }
+
+    /* ── entrance animation ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    header, .abstract-strip, .section-label, .doc-grid, .keywords, footer {
+      animation: fadeUp .55s ease both;
+    }
+    .abstract-strip { animation-delay: .08s; }
+    .section-label  { animation-delay: .14s; }
+    .doc-grid       { animation-delay: .20s; }
+    .keywords       { animation-delay: .28s; }
+    footer          { animation-delay: .32s; }
+
+    .doc-card:nth-child(1) { animation: fadeUp .4s .22s ease both; }
+    .doc-card:nth-child(2) { animation: fadeUp .4s .28s ease both; }
+    .doc-card:nth-child(3) { animation: fadeUp .4s .34s ease both; }
+    .doc-card:nth-child(4) { animation: fadeUp .4s .40s ease both; }
+    .doc-card:nth-child(5) { animation: fadeUp .4s .46s ease both; }
+    .doc-card:nth-child(6) { animation: fadeUp .4s .52s ease both; }
+    .doc-card:nth-child(7) { animation: fadeUp .4s .58s ease both; }
+
+    @media (max-width: 600px) {
+      header, .abstract-strip, .section-label, .doc-grid, .keywords, footer {
+        padding-left: 20px; padding-right: 20px;
+      }
+      h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="top-rule"></div>
+
+<header>
+  <div class="journal-tag">Case Report &amp; Mini-Review &nbsp;·&nbsp; Infectious Diseases</div>
+
+  <h1>Recurrent <em>Mycoplasma genitalium</em> Urethritis with Sequential Treatment Failures</h1>
+
+  <p class="subtitle">
+    Diagnostic Gaps, Macrolide Resistance, and Fluoroquinolone–Mineral Chelation as Compounding Barriers to Cure
+  </p>
+
+  <div class="authors">
+    <strong>Comstock D, MD</strong><sup>1</sup>&nbsp;&nbsp;·&nbsp;&nbsp;
+    <strong>Gareca MG, MD, FIDSA, FACP</strong><sup>2</sup>
+  </div>
+  <div class="affil">
+    <sup>1</sup> Department of Internal Medicine, Guthrie Lourdes Hospital, Binghamton, NY<br>
+    <sup>2</sup> Guthrie Corning · Guthrie Lourdes · Robert Packer Hospital · Guthrie Cortland Medical Center
+  </div>
+</header>
+
+<div class="abstract-strip">
+  <p>
+    A 34-year-old male presented with recurrent urethritis following urethral instrumentation, with documented
+    <em>M. genitalium</em> NAAT positivity across five sequential antibiotic courses spanning October 2025 through
+    February 2026. Presumed macrolide resistance, fluoroquinolone chelation by concurrent mineral supplementation
+    (AUC reduction ~39%; C<sub>max</sub> ~59%), and the absence of resistance-guided therapy each contributed to
+    treatment failure. Final microbiological cure was confirmed February 27, 2026. This case illustrates the
+    convergence of diagnostic gaps, antimicrobial stewardship failures, and pharmacokinetic pitfalls that define
+    the clinical challenge of <em>M. genitalium</em> in the United States.
+  </p>
+</div>
+
+<div class="section-label">Case Documents</div>
+
+<div class="doc-grid">
+
+  <a class="doc-card" href="Mgen_CaseReport_MiniReview.docx" download>
+    <span class="doc-type-badge badge-docx">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      DOCX · Manuscript
+    </span>
+    <div class="doc-title">Case Report with Mini-Review</div>
+    <div class="doc-desc">
+      Full manuscript — 42 references, 12 discussion subsections covering epidemiology, resistance architecture,
+      chelation pharmacokinetics, international ToC frameworks, adhesin biology, and research priorities.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_ResearchDay_Abstract_v2.docx" download>
+    <span class="doc-type-badge badge-docx">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      DOCX · Abstract
+    </span>
+    <div class="doc-title">Research Day Abstract v2</div>
+    <div class="doc-desc">
+      Structured abstract for the March 17, 2026 deadline. Background, case summary, key mechanism,
+      and clinical take-aways in submission format.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_Patient_Interview_Guide_v5.docx" download>
+    <span class="doc-type-badge badge-docx">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      DOCX · Clinical Tool
+    </span>
+    <div class="doc-title">Patient Interview Guide v5</div>
+    <div class="doc-desc">
+      Structured telephone interview protocol. IRB-compliant consent script, non-leading supplement elicitation
+      (Section C), sexual history, and post-call documentation checklist.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_Moxifloxacin_Counseling_Handout.docx" download>
+    <span class="doc-type-badge badge-docx">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      DOCX · Patient Ed
+    </span>
+    <div class="doc-title">Moxifloxacin Chelation Counseling Handout</div>
+    <div class="doc-desc">
+      One-page patient-facing handout. Chelation mechanism in plain language, mineral avoid-list,
+      timing rules, TOC appointment tracker, and when-to-call guidance.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_Reference_Guide_v2.docx" download>
+    <span class="doc-type-badge badge-docx">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      DOCX · Reference
+    </span>
+    <div class="doc-title">Annotated Reference Guide v2</div>
+    <div class="doc-desc">
+      Annotated bibliography with thematic groupings across 11 domains — epidemiology, resistance,
+      treatment, pharmacokinetics, co-infection, reproductive sequelae, and more.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_EndNote_Library.ris" download>
+    <span class="doc-type-badge badge-ris">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      RIS · EndNote
+    </span>
+    <div class="doc-title">Master Reference Library</div>
+    <div class="doc-desc">
+      55-reference RIS file covering all thematic groups. Import directly into EndNote, Zotero, or Mendeley.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+  <a class="doc-card" href="Mgen_Group11_CaseReports.ris" download>
+    <span class="doc-type-badge badge-ris">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      RIS · EndNote
+    </span>
+    <div class="doc-title">Group 11 — Case Reports Library</div>
+    <div class="doc-desc">
+      8-reference RIS subset of directly analogous case reports and series. Import to EndNote Group 11
+      for citation overlay with the main manuscript.
+    </div>
+    <div class="doc-arrow">Download ↓</div>
+  </a>
+
+</div><!-- /doc-grid -->
+
+<div class="keywords">
+  <span class="kw-label">Keywords</span>
+  <span class="kw">Mycoplasma genitalium</span>
+  <span class="kw">urethritis</span>
+  <span class="kw">macrolide resistance</span>
+  <span class="kw">moxifloxacin</span>
+  <span class="kw">chelation</span>
+  <span class="kw">drug interaction</span>
+  <span class="kw">test of cure</span>
+  <span class="kw">STI</span>
+  <span class="kw">antimicrobial stewardship</span>
+  <span class="kw">infectious disease</span>
+</div>
+
+<footer>
+  <p>
+    Comstock D &amp; Gareca MG · Guthrie Health System · 2026<br>
+    <span style="color:#3d5168;">For correspondence: </span>
+    <a href="mailto:derek.comstock@guthriepkg.org">derek.comstock@guthriepkg.org</a>
+  </p>
+  <a class="back-link" href="https://comstocd.github.io">
+    ← Clinical Reference Suite
+  </a>
+</footer>
+
+</body>
+</html>
