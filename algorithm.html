@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NGU / M. genitalium Management Algorithm — Comstock & Gareca</title>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0d1b2a;--navy2:#162336;--navy3:#1e2f45;
+  --cream:#f5f0e8;--cream2:#e8e0d0;
+  --gold:#b8943f;--gold2:#d4a84b;--gold3:#f0c060;
+  --muted:#8a9bb0;--line:rgba(184,148,63,.22);
+  --green:#2a7a4b;--green2:#3aa866;--green-bg:rgba(42,122,75,.12);
+  --red:#8b2020;--red2:#c04040;--red-bg:rgba(139,32,32,.12);
+  --blue:#1a4a7a;--blue2:#3a7abf;--blue-bg:rgba(26,74,122,.15);
+  --amber:#7a4a10;--amber2:#c47a20;--amber-bg:rgba(122,74,16,.15);
+  --purple:#4a2070;--purple2:#8a50c0;--purple-bg:rgba(74,32,112,.15);
+}
+html{scroll-behavior:smooth}
+body{background:var(--navy);color:var(--cream);font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;overflow-x:hidden}
+
+/* noise texture */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+
+.top-rule{height:3px;background:linear-gradient(90deg,transparent,var(--gold),var(--gold2),var(--gold),transparent);position:relative;z-index:1}
+
+header{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:52px 32px 36px;border-bottom:1px solid var(--line)}
+.journal-tag{font-weight:500;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.journal-tag::after{content:'';flex:1;height:1px;background:var(--line)}
+h1{font-family:'EB Garamond',serif;font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:600;line-height:1.2;color:var(--cream)}
+h1 em{font-style:italic;color:var(--gold2)}
+.subtitle{font-family:'EB Garamond',serif;font-style:italic;font-size:1rem;color:var(--muted);margin-top:8px;line-height:1.5}
+.meta{margin-top:20px;font-size:.78rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.meta-pill{background:rgba(184,148,63,.1);border:1px solid var(--line);border-radius:20px;padding:3px 12px;color:var(--gold);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;font-weight:500}
+
+/* disclaimer */
+.disclaimer{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:16px 32px}
+.disclaimer-box{background:var(--amber-bg);border:1px solid rgba(196,122,32,.3);border-radius:6px;padding:12px 16px;font-size:.76rem;color:#c9a060;line-height:1.55}
+.disclaimer-box strong{color:var(--amber2)}
+
+/* legend */
+.legend{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:8px 32px 20px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.legend-label{font-size:10px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.leg{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted)}
+.leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+
+/* main algorithm container */
+.algo{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:0 32px 60px}
+
+/* ─── step cards ─────────────────────────────────────────────── */
+.step{position:relative;margin-bottom:0}
+.step-connector{width:2px;height:32px;background:linear-gradient(to bottom,var(--gold),rgba(184,148,63,.3));margin:0 auto;position:relative;z-index:2}
+.step-connector.branch{background:rgba(184,148,63,.2)}
+
+.step-card{border-radius:8px;overflow:hidden;border:1px solid var(--line);position:relative;background:var(--navy2)}
+.step-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.step-card.type-action::before{background:var(--gold)}
+.step-card.type-test::before{background:var(--blue2)}
+.step-card.type-decision::before{background:var(--amber2)}
+.step-card.type-treatment::before{background:var(--green2)}
+.step-card.type-warning::before{background:var(--red2)}
+.step-card.type-info::before{background:var(--purple2)}
+
+.step-header{display:flex;align-items:center;gap:14px;padding:16px 20px 14px 20px}
+.step-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:.75rem;font-weight:500;flex-shrink:0}
+.type-action .step-num{background:rgba(184,148,63,.2);color:var(--gold2);border:1px solid rgba(184,148,63,.3)}
+.type-test .step-num{background:var(--blue-bg);color:var(--blue2);border:1px solid rgba(58,122,191,.3)}
+.type-decision .step-num{background:var(--amber-bg);color:var(--amber2);border:1px solid rgba(196,122,32,.3)}
+.type-treatment .step-num{background:var(--green-bg);color:var(--green2);border:1px solid rgba(58,168,102,.3)}
+.type-warning .step-num{background:var(--red-bg);color:var(--red2);border:1px solid rgba(192,64,64,.3)}
+.type-info .step-num{background:var(--purple-bg);color:var(--purple2);border:1px solid rgba(138,80,192,.3)}
+
+.step-badge{font-size:9px;font-weight:500;letter-spacing:.15em;text-transform:uppercase;padding:2px 8px;border-radius:3px}
+.type-action .step-badge{background:rgba(184,148,63,.12);color:var(--gold)}
+.type-test .step-badge{background:var(--blue-bg);color:var(--blue2)}
+.type-decision .step-badge{background:var(--amber-bg);color:var(--amber2)}
+.type-treatment .step-badge{background:var(--green-bg);color:var(--green2)}
+.type-warning .step-badge{background:var(--red-bg);color:var(--red2)}
+.type-info .step-badge{background:var(--purple-bg);color:var(--purple2)}
+
+.step-title{font-family:'EB Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--cream);flex:1;line-height:1.3}
+.step-title em{font-style:italic;color:var(--gold2)}
+
+.step-body{padding:0 20px 18px 62px}
+.step-body p{font-size:.83rem;color:#b0c0d4;line-height:1.65;margin-bottom:8px}
+.step-body p:last-child{margin-bottom:0}
+.step-body em{font-style:italic;color:var(--gold2)}
+.step-body strong{font-weight:600;color:var(--cream)}
+
+/* item lists */
+.item-list{list-style:none;display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.item-list li{font-size:.81rem;color:#b0c0d4;line-height:1.55;padding-left:18px;position:relative}
+.item-list li::before{content:'›';position:absolute;left:4px;color:var(--gold);font-weight:600}
+.item-list li em{font-style:italic;color:var(--gold2)}
+.item-list li strong{font-weight:600;color:var(--cream)}
+
+/* drug boxes */
+.drug-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-bottom:8px}
+.drug-box{border-radius:5px;padding:10px 12px;border:1px solid}
+.drug-box.first{background:var(--green-bg);border-color:rgba(58,168,102,.25)}
+.drug-box.second{background:var(--blue-bg);border-color:rgba(58,122,191,.25)}
+.drug-box.salvage{background:var(--amber-bg);border-color:rgba(196,122,32,.25)}
+.drug-box.avoid{background:var(--red-bg);border-color:rgba(192,64,64,.25)}
+.drug-box-label{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px}
+.first .drug-box-label{color:var(--green2)}
+.second .drug-box-label{color:var(--blue2)}
+.salvage .drug-box-label{color:var(--amber2)}
+.avoid .drug-box-label{color:var(--red2)}
+.drug-name{font-family:'DM Mono',monospace;font-size:.82rem;color:var(--cream);font-weight:500;margin-bottom:2px}
+.drug-detail{font-size:.72rem;color:var(--muted);line-height:1.4}
+
+/* branch decision */
+.branch-container{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:0}
+.branch-arm{border-radius:7px;overflow:hidden;border:1px solid var(--line)}
+.branch-header{padding:10px 14px;font-size:.78rem;font-weight:500;letter-spacing:.04em;display:flex;align-items:center;gap:7px}
+.branch-yes .branch-header{background:rgba(42,122,75,.18);color:var(--green2)}
+.branch-no .branch-header{background:var(--red-bg);color:var(--red2)}
+.branch-neutral .branch-header{background:var(--blue-bg);color:var(--blue2)}
+.branch-body{padding:10px 14px;background:var(--navy2)}
+.branch-body p{font-size:.78rem;color:#a0b4c8;line-height:1.55}
+.branch-body em{font-style:italic;color:var(--gold2)}
+.branch-body strong{font-weight:600;color:var(--cream)}
+.branch-body ul{list-style:none;display:flex;flex-direction:column;gap:3px;margin-top:6px}
+.branch-body ul li{font-size:.77rem;color:#a0b4c8;line-height:1.5;padding-left:14px;position:relative}
+.branch-body ul li::before{content:'›';position:absolute;left:2px;color:var(--gold)}
+.branch-body ul li em{font-style:italic;color:var(--gold2)}
+
+/* warning banner */
+.warn-banner{background:var(--red-bg);border:1px solid rgba(192,64,64,.3);border-radius:5px;padding:10px 14px;margin-bottom:8px;display:flex;gap:10px;align-items:flex-start}
+.warn-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.warn-text{font-size:.79rem;color:#e08080;line-height:1.5}
+.warn-text strong{color:#f0a0a0}
+
+/* checklist */
+.checklist{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.check-item{display:flex;gap:9px;align-items:flex-start;font-size:.8rem;color:#b0c0d4;line-height:1.5}
+.check-box{width:14px;height:14px;border-radius:3px;border:1px solid var(--gold);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.check-box-inner{width:7px;height:7px;border-radius:1px;background:transparent}
+.check-item em{font-style:italic;color:var(--gold2)}
+.check-item strong{color:var(--cream);font-weight:500}
+
+/* supplement grid */
+.supp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:6px;margin-bottom:8px}
+.supp-item{background:var(--red-bg);border:1px solid rgba(192,64,64,.2);border-radius:4px;padding:7px 10px;font-size:.75rem}
+.supp-name{font-family:'DM Mono',monospace;color:#f0a0a0;font-weight:500;margin-bottom:1px}
+.supp-example{color:#8a6a6a;font-size:.68rem}
+
+/* TOC timing */
+.toc-bar{background:var(--navy3);border:1px solid var(--line);border-radius:6px;padding:12px 16px;margin-bottom:8px}
+.toc-track{position:relative;height:6px;background:rgba(255,255,255,.06);border-radius:3px;margin:10px 0 20px}
+.toc-fill-bad{position:absolute;left:0;width:30%;height:100%;background:linear-gradient(90deg,var(--red2),var(--amber2));border-radius:3px}
+.toc-fill-good{position:absolute;left:30%;width:70%;height:100%;background:linear-gradient(90deg,var(--amber2),var(--green2));border-radius:3px}
+.toc-marker{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;transform:translateX(-50%)}
+.toc-marker.bad{left:30%;background:var(--red2);border:2px solid #f08080}
+.toc-marker.good{left:65%;background:var(--green2);border:2px solid var(--green2)}
+.toc-label{position:absolute;top:14px;transform:translateX(-50%);font-size:.65rem;white-space:nowrap;color:var(--muted)}
+.toc-label.bad{left:30%;color:#e08080}
+.toc-label.good{left:65%;color:var(--green2)}
+.toc-label.start{left:0%;transform:none}
+.toc-label.end{right:0;transform:none;left:auto}
+.toc-legend{display:flex;gap:14px;flex-wrap:wrap}
+.toc-leg{display:flex;align-items:center;gap:5px;font-size:.7rem;color:var(--muted)}
+.toc-dot{width:8px;height:8px;border-radius:50%}
+
+/* table */
+.algo-table{width:100%;border-collapse:collapse;font-size:.77rem;margin-bottom:8px}
+.algo-table th{background:rgba(184,148,63,.12);color:var(--gold);font-weight:500;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;padding:8px 12px;text-align:left;border-bottom:1px solid var(--line)}
+.algo-table td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04);color:#a8bcd0;line-height:1.45;vertical-align:top}
+.algo-table td em{font-style:italic;color:var(--gold2)}
+.algo-table td strong{color:var(--cream);font-weight:500}
+.algo-table tr:last-child td{border-bottom:none}
+.algo-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* special callout */
+.callout{border-radius:6px;padding:12px 16px;margin-bottom:8px;border-left:3px solid}
+.callout.gold{background:rgba(184,148,63,.08);border-color:var(--gold);color:#c8b080}
+.callout.green{background:var(--green-bg);border-color:var(--green2);color:#80c890}
+.callout.red{background:var(--red-bg);border-color:var(--red2);color:#e08080}
+.callout p{font-size:.8rem;line-height:1.6}
+.callout strong{font-weight:600}
+.callout em{font-style:italic}
+
+/* back/nav */
+.nav-bar{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:24px 32px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.nav-link{font-size:.75rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:5px;transition:color .2s}
+.nav-link:hover{color:var(--gold)}
+
+/* footer */
+footer{position:relative;z-index:1;max-width:980px;margin:0 auto;padding:20px 32px 48px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-top:20px}
+footer p{font-size:.73rem;color:#3d5168;line-height:1.6}
+footer a{color:var(--gold);text-decoration:none}
+footer a:hover{text-decoration:underline}
+
+/* responsive */
+@media(max-width:640px){
+  .branch-container{grid-template-columns:1fr}
+  .drug-grid{grid-template-columns:1fr}
+  .algo{padding:0 16px 40px}
+  header{padding:36px 16px 24px}
+  .step-body{padding-left:20px}
+  .nav-bar{padding:16px 16px 0}
+}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+header{animation:fadeUp .5s ease both}
+.disclaimer{animation:fadeUp .5s .05s ease both}
+.algo .step:nth-child(1){animation:fadeUp .4s .10s ease both}
+.algo .step:nth-child(2){animation:fadeUp .4s .15s ease both}
+.algo .step:nth-child(3){animation:fadeUp .4s .20s ease both}
+.algo .step:nth-child(4){animation:fadeUp .4s .25s ease both}
+.algo .step:nth-child(5){animation:fadeUp .4s .30s ease both}
+.algo .step:nth-child(6){animation:fadeUp .4s .35s ease both}
+.algo .step:nth-child(7){animation:fadeUp .4s .40s ease both}
+.algo .step:nth-child(8){animation:fadeUp .4s .45s ease both}
+</style>
+</head>
+<body>
+<div class="top-rule"></div>
+
+<div class="nav-bar">
+  <a href="index.html" class="nav-link">← Back to Case Documents</a>
+  <a href="https://comstocd.github.io" class="nav-link">Clinical Reference Suite ↗</a>
+</div>
+
+<header>
+  <div class="journal-tag">Clinical Algorithm &nbsp;·&nbsp; Sexually Transmitted Infections<span></span></div>
+  <h1>Non-Gonococcal Urethritis &amp; <em>Mycoplasma genitalium</em>:<br>Step-by-Step Management Algorithm</h1>
+  <div class="subtitle">First encounter through confirmed cure — outpatient primary care and urgent care settings</div>
+  <div class="meta">
+    <span class="meta-pill">Outpatient</span>
+    <span class="meta-pill">NGU / Urethritis</span>
+    <span class="meta-pill">CDC STI Guidelines 2021</span>
+    <span>Comstock D, Gareca MG &nbsp;·&nbsp; Guthrie Health System &nbsp;·&nbsp; 2026</span>
+  </div>
+</header>
+
+<div class="disclaimer">
+  <div class="disclaimer-box">
+    <strong>Clinical Use Notice:</strong> This algorithm is intended as an educational reference for clinicians and trainees. It reflects CDC 2021 STI Treatment Guidelines, IUSTI/European 2016 guidelines, and current evidence-based practice. It does not substitute for clinical judgment. Individual patient circumstances, local resistance patterns, and institutional formulary should guide management decisions.
+  </div>
+</div>
+
+<div class="legend">
+  <span class="legend-label">Step types</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--gold)"></span> Assessment</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--blue2)"></span> Diagnostics</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--amber2)"></span> Decision point</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--green2)"></span> Treatment</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--red2)"></span> Warning / avoid</span>
+  <span class="leg"><span class="leg-dot" style="background:var(--purple2)"></span> Counseling</span>
+</div>
+
+<div class="algo">
+
+  <!-- ── STEP 1 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-action">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <span class="step-badge">Assessment</span>
+        <div class="step-title">Separate true UTI from urethritis — before prescribing anything</div>
+      </div>
+      <div class="step-body">
+        <p>In a sexually active person presenting with dysuria, the first clinical task is not to prescribe — it is to determine the correct diagnostic category. True cystitis and urethritis share symptoms but have different etiologies, workups, and treatments entirely.</p>
+        <div class="branch-container">
+          <div class="branch-arm branch-yes">
+            <div class="branch-header">🔵 Likely Urethritis</div>
+            <div class="branch-body">
+              <ul>
+                <li>Sexually active, new or multiple partners</li>
+                <li>Urethral discharge (purulent or mucopurulent)</li>
+                <li>Symptoms after new partner or urethral instrumentation</li>
+                <li>UA normal or mildly abnormal, urine culture negative</li>
+                <li>In males: anatomically unusual for true ascending UTI</li>
+              </ul>
+              <p style="margin-top:8px"><strong>→ Proceed to Step 2 (STI workup)</strong></p>
+            </div>
+          </div>
+          <div class="branch-arm branch-neutral">
+            <div class="branch-header">🟡 Likely True UTI</div>
+            <div class="branch-body">
+              <ul>
+                <li>Female, postmenopausal, or structural urological abnormality</li>
+                <li>Frequency, urgency, suprapubic pain</li>
+                <li>UA with pyuria AND bacteriuria</li>
+                <li>No new sexual exposure, no discharge</li>
+              </ul>
+              <p style="margin-top:8px"><strong>→ Standard UTI workup + culture-guided therapy</strong></p>
+              <p>Note: In young men without structural abnormality, a UTI diagnosis warrants urology referral.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout gold">
+          <p><strong>Key principle:</strong> In a sexually active young man with dysuria, urethritis is far more likely than true UTI. The reflex to prescribe TMP-SMX or nitrofurantoin without a urine culture misses urethritis routinely and delays the correct diagnosis.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 2 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-test">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <span class="step-badge">Diagnostics</span>
+        <div class="step-title">Order the right tests at the first visit</div>
+      </div>
+      <div class="step-body">
+        <p>First-catch urine (first 20–30 mL of stream) is preferred for all NAATs. Urethral swab is an acceptable alternative.</p>
+        <table class="algo-table">
+          <thead><tr><th>Test</th><th>Specimen</th><th>Notes</th></tr></thead>
+          <tbody>
+            <tr><td><strong>GC / CT NAAT</strong></td><td>First-catch urine or urethral swab</td><td>Minimum standard. Universally available.</td></tr>
+            <tr><td><em>Trichomonas vaginalis</em> <strong>NAAT</strong></td><td>First-catch urine</td><td>Underdiagnosed in men. Common cause of persistent NGU. <strong>Do not omit.</strong></td></tr>
+            <tr><td><em>M. genitalium</em> <strong>NAAT</strong></td><td>First-catch urine</td><td>Quest and LabCorp offer this. Available at many reference labs. Order at first visit in all NGU and all recurrent presentations.</td></tr>
+            <tr><td><strong>Urinalysis</strong></td><td>Midstream urine</td><td>Pyuria (≥10 WBC/hpf) supports urethritis. Absence does not exclude.</td></tr>
+            <tr><td><strong>Urine culture</strong></td><td>Midstream clean catch</td><td>To rule out true UTI. Provides baseline.</td></tr>
+            <tr><td><strong>HIV, syphilis, HBV, HCV</strong></td><td>Serum</td><td>Co-test at the same visit. Do not defer.</td></tr>
+            <tr><td><em>M. genitalium</em> <strong>resistance genotyping</strong> (23S rRNA)</td><td>Same NAAT specimen</td><td>Not universally available. Where available, order at time of positive NAAT — not after first treatment failure.</td></tr>
+          </tbody>
+        </table>
+        <div class="callout gold">
+          <p><strong>Don't wait for results before initiating empiric treatment</strong> in symptomatic urethritis — but tailor follow-up management to the NAAT results when they return.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 3 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-treatment">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <span class="step-badge">Treatment</span>
+        <div class="step-title">Empiric treatment at the first encounter — the drug choice matters</div>
+      </div>
+      <div class="step-body">
+        <div class="branch-container">
+          <div class="branch-arm branch-yes">
+            <div class="branch-header">⚠️ GC suspected (purulent discharge, exposure)</div>
+            <div class="branch-body">
+              <ul>
+                <li><strong>Ceftriaxone 500 mg IM</strong> single dose (1 g if ≥150 kg)</li>
+                <li>Plus <strong>Doxycycline 100 mg BID × 7 days</strong> for chlamydia coverage</li>
+                <li>Per CDC 2021 STI guidelines</li>
+                <li>Treat empirically; do not wait for NAAT result</li>
+              </ul>
+            </div>
+          </div>
+          <div class="branch-arm branch-yes">
+            <div class="branch-header">✅ NGU — GC not suspected</div>
+            <div class="branch-body">
+              <ul>
+                <li><strong>Doxycycline 100 mg BID × 7 days</strong> — preferred first-line</li>
+                <li>If <em>T. vaginalis</em> suspected: add Metronidazole 2 g single dose</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="warn-banner">
+          <span class="warn-icon">🚫</span>
+          <div class="warn-text"><strong>Do not use Azithromycin 1 g as empiric monotherapy for NGU.</strong> This is a practice-changing update from prior guidelines. Azithromycin 1 g treats chlamydia effectively but delivers effective macrolide monotherapy to any co-existing undiagnosed <em>M. genitalium</em>, which is present in up to 38% of NGU cases. This is the primary iatrogenic driver of macrolide resistance in <em>M. genitalium</em>.</div>
+        </div>
+
+        <div class="callout green">
+          <p><strong>Why doxycycline is the right first choice:</strong> It covers chlamydia and has modest activity against <em>M. genitalium</em>. Critically, it does not select macrolide resistance, and it serves as a debulking agent — reducing bacterial load by ~2 logs — if moxifloxacin is needed later.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 4 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-info">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <span class="step-badge">Counseling</span>
+        <div class="step-title">Partner management and behavioral counseling — same visit, not deferred</div>
+      </div>
+      <div class="step-body">
+        <div class="drug-grid">
+          <div class="drug-box second">
+            <div class="drug-box-label">Partner treatment</div>
+            <div class="drug-name">60-day lookback</div>
+            <div class="drug-detail">All partners from the preceding 60 days (or most recent partner if no sexual contact in >60 days) should be evaluated and treated.</div>
+          </div>
+          <div class="drug-box second">
+            <div class="drug-box-label">Expedited partner therapy</div>
+            <div class="drug-name">EPT — legal in most states</div>
+            <div class="drug-detail">Prescribe or dispense treatment for the partner without the partner being seen. Recommended by CDC when partner evaluation is not feasible.</div>
+          </div>
+          <div class="drug-box first">
+            <div class="drug-box-label">Abstinence window</div>
+            <div class="drug-name">7 days post-treatment</div>
+            <div class="drug-detail">Abstain from sexual activity for 7 days after completing treatment AND until all partners are treated. Routinely under-counseled.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 5 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-decision">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <span class="step-badge">Decision point</span>
+        <div class="step-title">Follow-up: read the results and respond to the findings</div>
+      </div>
+      <div class="step-body">
+        <table class="algo-table">
+          <thead><tr><th>NAAT Result</th><th>Clinical status</th><th>Action</th></tr></thead>
+          <tbody>
+            <tr><td><strong>GC or CT positive</strong></td><td>Any</td><td>Treat per susceptibility; confirm partner treatment. EPT if not already done.</td></tr>
+            <tr><td><em><strong>T. vaginalis</strong></em> <strong>positive</strong></td><td>Any</td><td>Metronidazole (if not already given); confirm partner treatment.</td></tr>
+            <tr><td><em><strong>M. genitalium</strong></em> <strong>positive</strong>, symptoms resolved</td><td>Improving</td><td>Test of cure at ≥3 weeks post-treatment regardless of symptoms. <em>M. genitalium</em> maintains asymptomatic persistence and can be transmitted.</td></tr>
+            <tr><td><em><strong>M. genitalium</strong></em> <strong>positive</strong>, symptoms persist/recur</td><td>Treatment failure</td><td>→ See Step 6 (escalation algorithm)</td></tr>
+            <tr><td><strong>All NAATs negative</strong>, symptoms persist</td><td>Undifferentiated NGU</td><td>Broaden differential: HSV (obtain swab if lesions), adenovirus, <em>Ureaplasma</em>. Urology referral for cystourethroscopy to exclude structural pathology.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 6 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-treatment">
+      <div class="step-header">
+        <div class="step-num">6</div>
+        <span class="step-badge">Treatment</span>
+        <div class="step-title">Confirmed <em>M. genitalium</em> — recurrent or persistent: escalation algorithm</div>
+      </div>
+      <div class="step-body">
+        <p>The doxycycline debulking → moxifloxacin sequence is a <em>M. genitalium</em>-specific regimen. Do not apply it empirically to undifferentiated NGU without a confirmed positive NAAT.</p>
+
+        <div class="branch-container">
+          <div class="branch-arm branch-yes">
+            <div class="branch-header">✅ Resistance genotyping available</div>
+            <div class="branch-body">
+              <p><strong>Macrolide-susceptible (wild-type 23S rRNA):</strong></p>
+              <ul>
+                <li>Doxycycline 100 mg BID × 7d (debulking)</li>
+                <li>→ Azithromycin 1 g day 1, then 500 mg days 2–4</li>
+              </ul>
+              <p style="margin-top:8px"><strong>Macrolide-resistant (A2058G/A2059G mutation):</strong></p>
+              <ul>
+                <li>Doxycycline 100 mg BID × 14d (debulking)</li>
+                <li>→ Moxifloxacin 400 mg daily × 14d</li>
+                <li><strong>Before prescribing moxifloxacin: see Step 7</strong></li>
+              </ul>
+            </div>
+          </div>
+          <div class="branch-arm branch-neutral">
+            <div class="branch-header">🔵 No resistance testing available (US default)</div>
+            <div class="branch-body">
+              <p><strong>Presume macrolide resistance</strong> (>50–64% US prevalence). Treat as macrolide-resistant:</p>
+              <ul>
+                <li>Doxycycline 100 mg BID × 14d (debulking)</li>
+                <li>→ Moxifloxacin 400 mg daily × 14d</li>
+                <li><strong>Before prescribing moxifloxacin: see Step 7</strong></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="warn-banner" style="margin-top:10px">
+          <span class="warn-icon">⚠️</span>
+          <div class="warn-text"><strong>Do not escalate to moxifloxacin without confirming M. genitalium NAAT is positive.</strong> Fluoroquinolone resistance in <em>M. genitalium</em> is currently 6–11% in the US but rising. Every empiric moxifloxacin course in a patient without confirmed <em>M. genitalium</em> is a stewardship cost with no benefit.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 7 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-warning">
+      <div class="step-header">
+        <div class="step-num">7</div>
+        <span class="step-badge">Warning</span>
+        <div class="step-title">Before every moxifloxacin prescription: supplement history + chelation counseling</div>
+      </div>
+      <div class="step-body">
+        <p>Fluoroquinolones chelate polyvalent metal cations (Fe²⁺, Zn²⁺, Ca²⁺, Mg²⁺) in the gastrointestinal lumen prior to absorption, forming insoluble complexes that are not bioavailable. The pharmacokinetic consequence is clinically significant:</p>
+
+        <div class="drug-grid" style="margin-bottom:12px">
+          <div class="drug-box avoid">
+            <div class="drug-box-label">AUC reduction</div>
+            <div class="drug-name">~39%</div>
+            <div class="drug-detail">Area under the curve (total drug exposure) reduced by ~39% with mineral co-ingestion</div>
+          </div>
+          <div class="drug-box avoid">
+            <div class="drug-box-label">C<sub>max</sub> reduction</div>
+            <div class="drug-name">~59%</div>
+            <div class="drug-detail">Peak serum concentration reduced by ~59%. Moxifloxacin is concentration-dependent: AUC/MIC drives efficacy.</div>
+          </div>
+          <div class="drug-box avoid">
+            <div class="drug-box-label">Clinical result</div>
+            <div class="drug-name">Treatment failure</div>
+            <div class="drug-detail">Sub-inhibitory exposure = pharmacokinetic failure indistinguishable from microbiological resistance. Also selects for fluoroquinolone resistance.</div>
+          </div>
+        </div>
+
+        <p style="margin-bottom:8px"><strong>Ask specifically about all of the following. Patients do not volunteer supplement use when asked about medications.</strong></p>
+
+        <div class="supp-grid">
+          <div class="supp-item"><div class="supp-name">Multivitamins</div><div class="supp-example">One-A-Day, Centrum, GNC</div></div>
+          <div class="supp-item"><div class="supp-name">Iron supplements</div><div class="supp-example">FeSO₄, ferrous gluconate</div></div>
+          <div class="supp-item"><div class="supp-name">Zinc supplements</div><div class="supp-example">Zinc gluconate, zinc picolinate</div></div>
+          <div class="supp-item"><div class="supp-name">Calcium supplements</div><div class="supp-example">Calcium carbonate, citrate</div></div>
+          <div class="supp-item"><div class="supp-name">Magnesium</div><div class="supp-example">Mg oxide, glycinate, citrate</div></div>
+          <div class="supp-item"><div class="supp-name">Antacids</div><div class="supp-example">Tums, Maalox, Pepto-Bismol</div></div>
+          <div class="supp-item"><div class="supp-name">Sucralfate</div><div class="supp-example">Carafate</div></div>
+          <div class="supp-item"><div class="supp-name">Dairy near dose</div><div class="supp-example">Milk, yogurt, cheese</div></div>
+        </div>
+
+        <div class="callout red">
+          <p><strong>Counseling instruction:</strong> Discontinue ALL mineral-containing supplements and antacids for the full duration of moxifloxacin therapy. Complete abstinence is preferred. If a supplement is medically necessary (e.g., iron for iron-deficiency anemia), minimum separation is <strong>4–6 hours</strong> — taken well after the antibiotic dose. Provide this in writing at dispensing.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector"></div>
+
+  <!-- ── STEP 8 ─────────────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-test">
+      <div class="step-header">
+        <div class="step-num">8</div>
+        <span class="step-badge">Diagnostics</span>
+        <div class="step-title">Test of cure — timing is not optional</div>
+      </div>
+      <div class="step-body">
+        <p><em>M. genitalium</em> NAAT detects nucleic acid, not viable organisms. Dead organism DNA persists in urethral secretions for 14–21 days after successful eradication. Obtaining TOC during this window produces unreliable results in either direction.</p>
+
+        <div class="toc-bar">
+          <div style="font-size:.75rem;color:var(--muted);margin-bottom:4px">Days after completing antibiotics</div>
+          <div class="toc-track">
+            <div class="toc-fill-bad"></div>
+            <div class="toc-fill-good"></div>
+            <div class="toc-marker bad"></div>
+            <div class="toc-marker good"></div>
+            <div class="toc-label start">Day 0<br>Treatment ends</div>
+            <div class="toc-label bad">Day ~14–21<br>Minimum TOC</div>
+            <div class="toc-label good">Day ~28<br>Optimal TOC</div>
+            <div class="toc-label end">Day 42+</div>
+          </div>
+          <div class="toc-legend">
+            <span class="toc-leg"><span class="toc-dot" style="background:var(--red2)"></span> Too early — DNA from non-viable organisms may give false negative or false positive</span>
+            <span class="toc-leg"><span class="toc-dot" style="background:var(--green2)"></span> Reliable window — obtain TOC here</span>
+          </div>
+        </div>
+
+        <div class="warn-banner">
+          <span class="warn-icon">⚠️</span>
+          <div class="warn-text"><strong>Do not obtain TOC before 3 weeks post-treatment.</strong> A negative result at day 6 falsely reassures. A positive result in the same window may trigger an unnecessary additional antibiotic course — further selecting resistance. This case included a premature negative NAAT at day 6 post-moxifloxacin; the definitive confirmatory TOC at day 24 was the valid result.</div>
+        </div>
+
+        <table class="algo-table" style="margin-top:10px">
+          <thead><tr><th>Guideline</th><th>TOC recommendation</th><th>Interval</th></tr></thead>
+          <tbody>
+            <tr><td><strong>CDC 2021</strong></td><td>Selective — in macrolide-resistant or treatment-failure cases</td><td>Not specified</td></tr>
+            <tr><td><strong>IUSTI / European 2016</strong></td><td>Universal TOC recommended</td><td>≥3 weeks post-treatment</td></tr>
+            <tr><td><strong>Australia (ASHM)</strong></td><td>Mandatory universal TOC + partner notification</td><td>≥3 weeks post-treatment</td></tr>
+            <tr><td><strong>UK</strong></td><td>Universal TOC with resistance-guided therapy</td><td>≥3 weeks post-treatment</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout green">
+          <p><strong>Practical standard:</strong> Obtain TOC at <strong>≥3 weeks post-treatment completion</strong> regardless of which guideline framework you follow. If TOC is positive, assess for re-exposure, partner treatment failure, or treatment failure — and proceed to ID consultation before the next antibiotic course.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step-connector branch"></div>
+
+  <!-- ── SUMMARY TABLE ──────────────────────────────────────────── -->
+  <div class="step">
+    <div class="step-card type-info">
+      <div class="step-header">
+        <div class="step-num">✓</div>
+        <span class="step-badge">Summary</span>
+        <div class="step-title">Quick-reference summary for residents</div>
+      </div>
+      <div class="step-body">
+        <table class="algo-table">
+          <thead><tr><th>Situation</th><th>Order this</th><th>Give this</th><th>Don't do this</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Dysuria, sexually active, discharge</td>
+              <td>GC/CT/TV/<em>M. gen</em> NAAT + HIV/syphilis</td>
+              <td>Doxy 100 mg BID × 7d ± ceftriaxone (if GC suspected)</td>
+              <td><strong>Azithromycin 1 g as monotherapy</strong></td>
+            </tr>
+            <tr>
+              <td>Recurrent NGU after doxy</td>
+              <td>Confirm <em>M. gen</em> NAAT result; recheck TV/CT</td>
+              <td>Doxy 14d → Moxifloxacin 14d if <em>M. gen</em> confirmed</td>
+              <td>Escalate without confirming <em>M. gen</em> positivity</td>
+            </tr>
+            <tr>
+              <td>Before every moxifloxacin prescription</td>
+              <td>Complete supplement/antacid/dairy history</td>
+              <td>Written chelation counseling; discontinue all minerals for therapy duration</td>
+              <td>Assume patient will self-report vitamins</td>
+            </tr>
+            <tr>
+              <td>After any antibiotic course</td>
+              <td>TOC NAAT (schedule at prescription)</td>
+              <td>TOC at ≥3 weeks post-treatment</td>
+              <td>TOC before 21 days post-treatment</td>
+            </tr>
+            <tr>
+              <td>All NAATs negative, symptoms persist</td>
+              <td>HSV swab, <em>Ureaplasma</em>, urology referral</td>
+              <td>Urology cystourethroscopy if structural cause suspected</td>
+              <td>Empiric additional antibiotics without diagnosis</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout gold" style="margin-top:12px">
+          <p><strong>The meta-principle:</strong> In a pathogen where US clinicians treat blindly — no reportability, no FDA-approved resistance testing, no culture — the correctable variables carry disproportionate clinical weight. Supplement history, counseling quality, and TOC timing are each fully controllable and each directly prevented treatment failure in the case underlying this algorithm.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- .algo -->
+
+<footer>
+  <p>Comstock D &amp; Gareca MG &nbsp;·&nbsp; Guthrie Health System &nbsp;·&nbsp; 2026<br>
+  <span style="color:#3d5168">For correspondence: </span>
+  <a href="mailto:david.comstock@guthrie.org">david.comstock@guthrie.org</a></p>
+  <a href="https://comstocd.github.io/Mycoplasma-genitalium/" style="font-size:.73rem;color:var(--muted);text-decoration:none">🌐 comstocd.github.io/Mycoplasma-genitalium/</a>
+</footer>
+
+</body>
+</html>
